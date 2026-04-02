@@ -18,9 +18,12 @@ export TGT='postgresql://user:pass@target-host:5432/mydb'
 ./migrate.sh copy-schema
 ./migrate.sh dump-and-restore
 ./migrate.sh monitor           # watch until lag ~ 0, then Ctrl+C
+# stop app
+./migrate.sh monitor           # watch until lag = 0, normally immediatelly
 ./migrate.sh verify
 ./migrate.sh cutover
 ./migrate.sh verify            # final check
+# start app with new connection string
 ```
 
 ## Subcommands
