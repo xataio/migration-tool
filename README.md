@@ -1,6 +1,12 @@
-# migrate.sh
+# Simple tool for migrating Postgres databases between providers
 
-Single-script tool for zero-downtime PostgreSQL migrations using `pg_dump`/`pg_restore` and logical replication.
+Single-script tool for minimal-downtime PostgreSQL migrations using `pg_dump`/`pg_restore` and logical replication.
+
+Features:
+* minimal downtime by syncing via logical replication
+* copy the bulk of the data via pg_dump / pg_restore
+* monitor, preflight and verify commands
+* optional TCP level proxy for working around firewalls and VPN access
 
 ## Prerequisites
 
