@@ -507,7 +507,7 @@ do_dump_and_restore() {
     EXCLUDE_PATTERN=$(IFS='|'; echo "${ALL_EXCLUDED[*]}" | sed 's/\*/\.\*/g')
   fi
   PUB_TABLES=$(psql "$SRC" -t -A -c "
-    SELECT string_agg(c.relname, ', ')
+    SELECT string_agg(quote_ident(c.relname), ', ')
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname = 'public'
