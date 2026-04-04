@@ -1,0 +1,6 @@
+data.dir/
+schema.dir/
+*.log
+test/.venv/
+__pycache__/
+*.pyc

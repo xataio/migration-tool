@@ -40,7 +40,7 @@ EXCLUDE_TABLES="${MIGRATE_EXCLUDE_TABLES:-}"
 SCHEMAS="${MIGRATE_SCHEMAS:-}"
 # Connection string the target uses to reach the source (via proxy if needed)
 # If not set, $SRC is used directly in CREATE SUBSCRIPTION
-SRC_PROXY="${MIGRATE_SRC_PROXY:-$SRC}"
+SRC_PROXY="${MIGRATE_SRC_PROXY:-${SRC:-}}"
 # Local port for the socat proxy
 PROXY_PORT="${MIGRATE_PROXY_PORT:-5432}"
 
@@ -244,7 +244,7 @@ do_copy_schema() {
     --no-owner \
     --no-privileges \
     --format=directory \
-    "${SCHEMA_EXCLUDE_FLAGS[@]}" \
+    ${SCHEMA_EXCLUDE_FLAGS[@]+"${SCHEMA_EXCLUDE_FLAGS[@]}"} \
     --file="$SCHEMA_DIR"
   echo "  Saved to $SCHEMA_DIR"
   echo ""
@@ -640,12 +640,12 @@ proc.wait()
   fi
 
   pg_dump "$SRC" \
-    "${SCHEMA_FILTER_FLAGS[@]}" \
+    ${SCHEMA_FILTER_FLAGS[@]+"${SCHEMA_FILTER_FLAGS[@]}"} \
     --data-only \
     --format=directory \
     --compress=gzip \
     --snapshot="$SNAPSHOT_ID" \
-    "${DUMP_EXCLUDE_FLAGS[@]}" \
+    ${DUMP_EXCLUDE_FLAGS[@]+"${DUMP_EXCLUDE_FLAGS[@]}"} \
     --file="$DATA_DIR"
   stop_size_monitor
 
