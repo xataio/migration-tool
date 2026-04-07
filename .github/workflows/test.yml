@@ -1,0 +1,73 @@
+name: Functional Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      source:
+        image: postgres:18
+        env:
+          POSTGRES_USER: src
+          POSTGRES_PASSWORD: src
+          POSTGRES_DB: srcdb
+        options: >-
+          --health-cmd "pg_isready -U src"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
+
+      target:
+        image: postgres:18
+        env:
+          POSTGRES_USER: tgt
+          POSTGRES_PASSWORD: tgt
+          POSTGRES_DB: tgtdb
+        options: >-
+          --health-cmd "pg_isready -U tgt"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5434:5432
+
+    env:
+      SRC: postgresql://src:src@localhost:5433/srcdb
+      TGT: postgresql://tgt:tgt@localhost:5434/tgtdb
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable logical replication on source
+        run: |
+          psql "$SRC" -c "ALTER SYSTEM SET wal_level = 'logical';"
+          docker restart ${{ job.services.source.id }}
+          sleep 5
+          # Wait for source to be ready after restart
+          for i in $(seq 1 30); do
+            pg_isready -h localhost -p 5433 -U src && break
+            sleep 1
+          done
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          cd test
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Run functional tests
+        run: |
+          cd test
+          .venv/bin/python -m pytest test_functional.py -v -s --timeout=900
