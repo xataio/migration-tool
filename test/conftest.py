@@ -63,18 +63,19 @@ def work_dir(tmp_path_factory):
     return tmp_path_factory.mktemp("migrate_work")
 
 
-@pytest.fixture(scope="session")
-def migrate(work_dir):
-    """Return a callable that runs migrate.sh with the test environment."""
+def make_migrate(work_dir, slot_name, pub_name):
+    """Factory: returns a migrate() callable with custom slot/pub names."""
 
-    def _run(subcommand, timeout=600, input_text=None):
+    def _run(subcommand, timeout=600, input_text=None, extra_env=None):
         env = {
             **os.environ,
-            "MIGRATE_SLOT": SLOT_NAME,
-            "MIGRATE_PUB": PUB_NAME,
+            "MIGRATE_SLOT": slot_name,
+            "MIGRATE_PUB": pub_name,
             "MIGRATE_WORK_DIR": str(work_dir),
             "MIGRATE_JOBS": "2",
         }
+        if extra_env:
+            env.update(extra_env)
         result = subprocess.run(
             ["bash", MIGRATE_SH, subcommand],
             env=env,
@@ -91,6 +92,12 @@ def migrate(work_dir):
         return result
 
     return _run
+
+
+@pytest.fixture(scope="session")
+def migrate(work_dir):
+    """Return a callable that runs migrate.sh with the test environment."""
+    return make_migrate(work_dir, SLOT_NAME, PUB_NAME)
 
 
 @pytest.fixture(scope="session", autouse=True)

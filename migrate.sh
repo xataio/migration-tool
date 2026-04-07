@@ -899,7 +899,7 @@ do_cutover() {
 
   green "[2/4] Syncing sequences from source to target..."
   psql "$SRC" -t -A -c "
-    SELECT 'SELECT setval(''' || sequence_schema || '.' || sequence_name || ''', '
+    SELECT 'SELECT setval(''' || quote_ident(sequence_schema) || '.' || quote_ident(sequence_name) || ''', '
       || last_value || ', true);'
     FROM information_schema.sequences s
     JOIN pg_sequences ps ON s.sequence_name = ps.sequencename

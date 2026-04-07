@@ -13,7 +13,7 @@ ifndef TGT
 $(error TGT is not set. Export TGT=postgresql://... pointing to the target database)
 endif
 
-.PHONY: load_data test
+.PHONY: load_data test long-test test-full
 
 $(VENV): requirements.txt
 	python3 -m venv $(VENV)
@@ -29,4 +29,10 @@ endif
 	psql "$(SRC)" -f seed.sql
 
 test: $(VENV)
+	$(PYTHON) -m pytest test_functional.py -v -s --timeout=900
+
+long-test: $(VENV)
 	$(PYTHON) -m pytest test_migration.py -v -s
+
+test-full: $(VENV)
+	$(PYTHON) -m pytest test_functional.py test_migration.py -v -s --timeout=900
