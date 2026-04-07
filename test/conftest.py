@@ -73,6 +73,7 @@ def make_migrate(work_dir, slot_name, pub_name):
             "MIGRATE_PUB": pub_name,
             "MIGRATE_WORK_DIR": str(work_dir),
             "MIGRATE_JOBS": "2",
+            "MIGRATE_DUMP_JOBS": "2",
         }
         if extra_env:
             env.update(extra_env)

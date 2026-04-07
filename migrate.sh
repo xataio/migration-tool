@@ -20,6 +20,7 @@ set -euo pipefail
 # Optional env vars:  MIGRATE_SLOT (default: migration_sub)
 #                     MIGRATE_PUB  (default: migration_pub)
 #                     MIGRATE_JOBS (default: 4)
+#                     MIGRATE_DUMP_JOBS (default: 1)
 #                     MIGRATE_WORK_DIR (default: .)
 # =============================================================================
 
@@ -30,6 +31,7 @@ SLOT_NAME="${MIGRATE_SLOT:-migration_sub}"
 PUB_NAME="${MIGRATE_PUB:-migration_pub}"
 WORK_DIR="${MIGRATE_WORK_DIR:-.}"
 JOBS="${MIGRATE_JOBS:-4}"
+DUMP_JOBS="${MIGRATE_DUMP_JOBS:-1}"
 SCHEMA_DIR="${WORK_DIR}/schema.dir"
 DATA_DIR="${WORK_DIR}/data.dir"
 # Comma-separated list of tables to exclude from data dump (schema still copied)
@@ -244,6 +246,7 @@ do_copy_schema() {
     --no-owner \
     --no-privileges \
     --format=directory \
+    --jobs="$DUMP_JOBS" \
     ${SCHEMA_EXCLUDE_FLAGS[@]+"${SCHEMA_EXCLUDE_FLAGS[@]}"} \
     --file="$SCHEMA_DIR"
   echo "  Saved to $SCHEMA_DIR"
@@ -644,6 +647,7 @@ proc.wait()
     --data-only \
     --format=directory \
     --compress=gzip \
+    --jobs="$DUMP_JOBS" \
     --snapshot="$SNAPSHOT_ID" \
     ${DUMP_EXCLUDE_FLAGS[@]+"${DUMP_EXCLUDE_FLAGS[@]}"} \
     --file="$DATA_DIR"
@@ -1200,6 +1204,7 @@ case "$CMD" in
     echo "Optional env vars:  MIGRATE_SLOT (default: migration_sub)"
     echo "                    MIGRATE_PUB  (default: migration_pub)"
     echo "                    MIGRATE_JOBS (default: 4)"
+    echo "                    MIGRATE_DUMP_JOBS (default: 1)"
     echo "                    MIGRATE_WORK_DIR (default: .)"
     echo "                    MIGRATE_MONITOR_INTERVAL (default: 5)"
     echo "                    MIGRATE_EXCLUDE_DATA (comma-separated tables to skip data for)"
