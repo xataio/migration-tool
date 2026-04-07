@@ -41,6 +41,9 @@ jobs:
     env:
       SRC: postgresql://src:src@localhost:5433/srcdb
       TGT: postgresql://tgt:tgt@localhost:5434/tgtdb
+      # SRC_PROXY is what the TGT container uses to reach SRC.
+      # Inside Docker, containers reach each other by service name, not localhost.
+      MIGRATE_SRC_PROXY: postgresql://src:src@source:5432/srcdb
 
     steps:
       - uses: actions/checkout@v4
