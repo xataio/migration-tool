@@ -57,6 +57,7 @@ export TGT='postgresql://user:pass@target-host:5432/mydb'
 | `MIGRATE_SLOT` | No | `migration_sub` | Replication slot name |
 | `MIGRATE_PUB` | No | `migration_pub` | Publication name |
 | `MIGRATE_JOBS` | No | `4` | Parallel jobs for pg_restore |
+| `MIGRATE_DUMP_JOBS` | No | `1` | Parallel jobs for pg_dump (off by default) |
 | `MIGRATE_WORK_DIR` | No | `.` | Directory for dump files |
 | `MIGRATE_MONITOR_INTERVAL` | No | `5` | Seconds between monitor checks |
 | `MIGRATE_SCHEMAS` | No | all | Comma-separated schemas to dump (e.g. `public`) |

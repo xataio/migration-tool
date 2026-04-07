@@ -28,7 +28,8 @@ Zero-downtime PostgreSQL migration tool using logical replication.
 | `MIGRATE_SRC_PROXY` | `$SRC` | Connection string TGT uses to reach SRC (for subscriptions) |
 | `MIGRATE_SLOT` | `migration_sub` | Replication slot/subscription name |
 | `MIGRATE_PUB` | `migration_pub` | Publication name |
-| `MIGRATE_JOBS` | `4` | Parallelism for pg_dump/pg_restore |
+| `MIGRATE_JOBS` | `4` | Parallelism for pg_restore |
+| `MIGRATE_DUMP_JOBS` | `1` | Parallelism for pg_dump (off by default) |
 | `MIGRATE_WORK_DIR` | `.` | Directory for schema/data dumps |
 
 ## Testing
